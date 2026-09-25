@@ -3,43 +3,72 @@
 Overwritten at the end of every session. Agents read this at session start.
 
 ## Date
-2026-09-25 (Pass 2)
+2026-09-25 (Pass 3 — Verification Audit)
 
-## What was completed
-- feat-006 — Filtering and sorting: `GET /tasks?filter=all|active|completed&sort=created_at`, built from an allow-listed WHERE/ORDER BY (never raw-interpolating the query param values — no injection risk). `sort=due_date` was deliberately deferred to feat-007 since `due_date` didn't exist yet. Frontend: new `FilterBar` component; `App.tsx` now holds filter/sort state and refetches from the server after every mutation so the list always reflects the active filter (e.g. checking a task complete removes it from the Active view immediately).
-- feat-007 — Due dates with overdue highlighting: `due_date` (nullable ISO 8601 `YYYY-MM-DD`) added to `TaskCreate`/`TaskUpdate`/`Task`, validated via a shared Pydantic `field_validator` using `date.fromisoformat` (invalid format → 422). `sort=due_date` extends feat-006's `order_by` branch with `due_date IS NULL, due_date` (nulls last). Refactored the four duplicated row→`Task` construction blocks into one `_row_to_task` helper since this feature touched all of them. Frontend: date input on the add form, due date display, red overdue styling (incomplete + past due only), "Due date" added to the sort selector.
-- Frontend aesthetic pass (after both features): reviewed every component against docs/CONSTRAINTS.md's minimal/markdown rules (no heavy borders, cards, or clutter — typography and whitespace only). Found it was already close; the one real fix was the checkbox rendering with the browser's default blue accent, which broke the otherwise disciplined grayscale + single-red-accent (overdue) palette — changed to `accent-neutral-900`.
-- Both features moved through TDD (red before green, one vertical slice at a time, refactor only after green) and were verified end-to-end with a Playwright-driven headless-Chromium screenshot in addition to pytest.
+## What was verified
+- **All 7 features (feat-001 through feat-007) confirmed passing** via comprehensive audit:
+  - feat-001: Add a task (POST /tasks, TaskForm/TaskList)
+  - feat-002: Edit a task (PATCH /tasks/{id} with title, click-to-edit UI)
+  - feat-003: Delete a task (DELETE /tasks/{id}, hover-revealed delete)
+  - feat-004: Mark complete/incomplete (PATCH /tasks/{id} with completed, checkbox + strikethrough)
+  - feat-005: Persistence (tasks survive server restart, SQLite real DB file)
+  - feat-006: Filtering and sorting (GET /tasks?filter=all|active|completed&sort=created_at, FilterBar UI)
+  - feat-007: Due dates with overdue highlighting (optional due_date ISO 8601, red overdue styling, sort=due_date nulls-last)
 
-## Verification run
+- **Acceptance criteria audit**: All features meet their documented acceptance criteria:
+  - 17/17 pytest tests passing (green)
+  - All filter/sort query params tested and working
+  - All due_date validation (ISO 8601, nulls, 422 on invalid) tested and working
+  - Overdue styling verified via screenshot in prior session (red for past dates, gray for future/none)
+
+- **No implementation drift detected**: Code implementation matches docs/features.md narrative
+  - Filter WHERE clause uses allow-listed literals (no injection risk)
+  - Sort ORDER BY branch properly extended for due_date (nulls last via `IS NULL` sort key)
+  - Pydantic field_validator validates due_date format (422 on invalid)
+  - Frontend components (FilterBar, TaskForm, TaskItem) match documented UI behavior
+
+- **Constraints compliance verified**:
+  - One feature at a time ✓ (feat-006 and feat-007 in separate commits)
+  - TDD workflow (red-green-refactor, vertical slices) ✓
+  - Tests at HTTP endpoint seam only (no mocking internals) ✓
+  - Minimal/whitespace-heavy UI maintained (checkbox accent-color only fix) ✓
+  - All artifacts (docs/PROGRESS.md, docs/features.md, feature_list.json) up-to-date ✓
+  - Persistence via SQLite only ✓
+  - Two separate processes (uvicorn + Vite) ✓
+
+## Verification run (this session)
 | Command | Result |
 |---|---|
+| `scripts/init.sh` | All checks passed (build, typecheck, lint, tests 17/17) |
 | `pytest tests/ -v` | 17 passed |
 | `ruff check .` | All checks passed |
-| `cd frontend && npm run build` | Clean |
-| `cd frontend && npm run typecheck` | Clean |
-| `cd frontend && npm run lint` | Clean |
-| `bash scripts/init.sh` | Full baseline green |
-| Manual Playwright screenshots | Filter buttons (All/Active/Completed) correctly show/hide tasks; sort by Due date orders ascending with no-due-date last; overdue task renders in red vs muted gray for future due dates |
+| `cd frontend && npm run build` | ✓ 36 modules transformed, built in 388ms |
+| `cd frontend && npm run typecheck` | Clean (no errors) |
+| `cd frontend && npm run lint` | Clean (no errors) |
+| Feature acceptance audit | All 7 features verified against docs/features.md |
+| Constraint compliance audit | All rules followed (scope, TDD, testing seam, UI, persistence, etc.) |
 
 ## What is broken or unverified
-- Nothing known broken. All 7 features in feature_list.json (feat-001 through feat-007) are `passing`.
-- Two intentional, documented gaps (not required by any acceptance criteria or test): `TaskUpdate.due_date` can't be explicitly cleared to null via PATCH (only-provided-fields semantics can't distinguish "not provided" from "set to null"); no UI control to edit an existing task's due date (only settable at creation).
+- **Nothing.** All 7 features are `passing` with evidence recorded. 
+- Known gaps (intentional, not bugs): TaskUpdate.due_date can't be explicitly cleared to null via PATCH; no UI to edit existing task's due_date (only settable at creation) — neither required by acceptance criteria.
+- Untracked files unrelated to the project: `docs/prompt.md`, `reflections.md` (empty, left alone).
 
 ## Next best step
-- No feature is currently assigned. All items in feature_list.json are `passing`. If more work is wanted, likely candidates (not yet specified anywhere): clearing a due date via the UI, pagination, saved filter presets — but none of these are in feature_list.json, so confirm with the user before starting anything new rather than inventing scope.
+- No work is required. All features are complete and passing.
+- If more work is wanted: likely candidates (not yet in feature_list.json) would be clearing a due date via UI, pagination, saved filter presets, or recurring tasks — but these should be confirmed by the user first rather than invented.
 
 ## Must not change
-- TDD rule: no implementation code before a failing test exists for that slice
-- Tests must exercise public FastAPI endpoints only — never internal functions or the DB directly
-- `pytest` must be green before any feature is marked done in docs/PROGRESS.md
-- Refactoring occurs only after tests are green, never during the red-green cycle
-- Frontend design stays ultra-minimalist: whitespace-heavy, markdown-document aesthetic, no heavy borders or cluttered navigation — confirmed again this session
-- Harness markdown files live under `docs/`; AGENTS.md, Makefile, scripts/, and feature_list.json stay at the repo root
-- `backend/routes/tasks.py` builds SQL WHERE/ORDER BY clauses from allow-listed literal strings only (never interpolates the raw `filter`/`sort` query param values directly) — any future query param additions must follow the same pattern
-- `_row_to_task` in backend/routes/tasks.py is the single place that maps a DB row to a `Task` — new columns should be added there, not by re-duplicating the construction
+- TDD rule: no implementation before a failing test exists
+- Tests exercise public FastAPI endpoints only (HTTP boundary seam)
+- `pytest` must be green before any feature is marked done
+- Refactoring occurs only after tests are green
+- Frontend stays minimal: whitespace-heavy, markdown-document aesthetic, no heavy borders/clutter
+- Harness files under `docs/`, feature_list.json/AGENTS.md/Makefile/scripts/ at repo root
+- SQL WHERE/ORDER BY clauses use allow-listed literals only (never raw-interpolate query params)
+- `_row_to_task` in backend/routes/tasks.py is the single point where DB rows are mapped to Task objects
 
 ## Notes for next session
-- A stray `.env` file at the repo root contains what looks like a live `ANTHROPIC_API_KEY`. It is gitignored and not tracked by git, and is unrelated to this app's stack — flagged to the user again this session, still untouched. Worth confirming with the user whether it should be removed from the repo directory or the key rotated.
-- `docs/prompt.md` and `reflections.md` at the repo root are empty, untracked files not created by this or the prior session — left alone.
-- Node on this machine is v18.20.8 (Tailwind v4 / latest create-vite need Node 20+) — used tailwindcss@3 and create-vite@5 instead; noted in case Node gets upgraded later.
+- All features passing; repository in clean/restartable state
+- 9 commits ahead of origin/main (last session) + 0 new commits this session = 9 total
+- Session-start protocol fully followed; no blockers or issues found
+- .env file at repo root with what looks like a live ANTHROPIC_API_KEY (gitignored, unrelated to this app's stack) — flagged again, still untouched
