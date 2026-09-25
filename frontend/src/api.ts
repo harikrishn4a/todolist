@@ -7,8 +7,11 @@ export interface Task {
   created_at: string;
 }
 
-export async function listTasks(): Promise<Task[]> {
-  const res = await fetch(`${API_BASE_URL}/tasks`);
+export type Filter = "all" | "active" | "completed";
+export type Sort = "created_at";
+
+export async function listTasks(filter: Filter = "all", sort: Sort = "created_at"): Promise<Task[]> {
+  const res = await fetch(`${API_BASE_URL}/tasks?filter=${filter}&sort=${sort}`);
   return res.json();
 }
 

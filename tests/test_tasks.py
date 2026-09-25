@@ -79,6 +79,40 @@ def test_user_can_mark_a_completed_task_incomplete(client):
     assert response.json()["completed"] is False
 
 
+def test_filtering_active_tasks_excludes_completed(client):
+    active = client.post("/tasks", json={"title": "Buy milk"}).json()
+    completed = client.post("/tasks", json={"title": "Walk the dog"}).json()
+    client.patch(f"/tasks/{completed['id']}", json={"completed": True})
+
+    listed = client.get("/tasks?filter=active").json()
+
+    ids = [task["id"] for task in listed]
+    assert active["id"] in ids
+    assert completed["id"] not in ids
+
+
+def test_filtering_completed_tasks_excludes_active(client):
+    active = client.post("/tasks", json={"title": "Buy milk"}).json()
+    completed = client.post("/tasks", json={"title": "Walk the dog"}).json()
+    client.patch(f"/tasks/{completed['id']}", json={"completed": True})
+
+    listed = client.get("/tasks?filter=completed").json()
+
+    ids = [task["id"] for task in listed]
+    assert completed["id"] in ids
+    assert active["id"] not in ids
+
+
+def test_sorting_by_created_at_returns_ascending_creation_order(client):
+    first = client.post("/tasks", json={"title": "First"}).json()
+    second = client.post("/tasks", json={"title": "Second"}).json()
+    third = client.post("/tasks", json={"title": "Third"}).json()
+
+    listed = client.get("/tasks?sort=created_at").json()
+
+    assert [task["id"] for task in listed] == [first["id"], second["id"], third["id"]]
+
+
 def test_task_persists_after_simulated_restart():
     fd, path = tempfile.mkstemp(suffix=".db")
     os.close(fd)

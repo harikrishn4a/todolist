@@ -19,9 +19,17 @@ def create_task(task: TaskCreate) -> Task:
 
 
 @router.get("/tasks", response_model=list[Task])
-def list_tasks() -> list[Task]:
+def list_tasks(filter: str = "all", sort: str = "created_at") -> list[Task]:
+    where = ""
+    if filter == "active":
+        where = "WHERE completed = 0"
+    elif filter == "completed":
+        where = "WHERE completed = 1"
+
+    order_by = "created_at" if sort == "created_at" else "id"
+
     conn = get_connection()
-    rows = conn.execute("SELECT * FROM tasks ORDER BY id").fetchall()
+    rows = conn.execute(f"SELECT * FROM tasks {where} ORDER BY {order_by}").fetchall()
     conn.close()
     return [
         Task(id=row["id"], title=row["title"], completed=bool(row["completed"]), created_at=row["created_at"])

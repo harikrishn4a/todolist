@@ -149,13 +149,13 @@ Persistence across restarts was already correct by construction since feat-001 (
 Filter controls let the user view All / Active / Completed tasks. Sort controls let the user order tasks by creation date or due date.
 
 **Tasks:**
-- [ ] Write failing pytest tests for GET /tasks?filter=all|active|completed
-- [ ] Write failing pytest tests for GET /tasks?sort=created_at|due_date
-- [ ] Implement filter and sort query parameters in FastAPI GET /tasks
-- [ ] Confirm pytest passes
-- [ ] Add filter toggle buttons (All / Active / Completed) to React UI
-- [ ] Add sort selector to React UI
-- [ ] Pass selected filter and sort as query params in fetch call; re-render list
+- [x] Write failing pytest tests for GET /tasks?filter=all|active|completed
+- [x] Write failing/confirming pytest test for GET /tasks?sort=created_at (sort=due_date deferred to Feature 007 — no due_date column exists yet)
+- [x] Implement filter and sort query parameters in FastAPI GET /tasks
+- [x] Confirm pytest passes
+- [x] Add filter toggle buttons (All / Active / Completed) to React UI
+- [x] Add sort selector to React UI (currently one option; Feature 007 adds "Due date")
+- [x] Pass selected filter and sort as query params in fetch call; re-render list
 
 **Acceptance criteria:**
 - GET /tasks?filter=active returns only tasks where `completed` is false
@@ -169,7 +169,7 @@ Filter controls let the user view All / Active / Completed tasks. Sort controls 
 - Pagination
 
 **Notes:**
-Not yet documented
+Implemented via TDD: two vertical slices for filter=active/completed (WHERE clause built from an allow-list, never raw string interpolation of the query param), then a third slice for sort=created_at that confirmed already-correct behavior (id and created_at always agree in this schema, same pattern as the feat-005 persistence test). sort=due_date is explicitly deferred to Feature 007, which will extend the same order_by branch. Frontend: new FilterBar component; App.tsx now holds filter/sort state and refetches from the server after every mutation so the list always reflects the active filter/sort rather than relying on stale local splicing.
 
 ---
 
