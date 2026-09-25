@@ -105,16 +105,20 @@
       "area": "Persistence",
       "title": "Persistence — tasks survive server restarts",
       "user_visible_behavior": "All tasks (titles, completion states, due dates) are present after the uvicorn server is stopped and restarted; no data is lost.",
-      "status": "unsure",
+      "status": "passing",
       "blocked_reason": "",
       "verification": [
         "pytest passes confirming SQLite DB file is used (not in-memory)",
         "Create tasks, restart uvicorn, GET /tasks returns all previously created tasks",
         "DB file exists on disk at expected path after first run"
       ],
-      "evidence": [],
-      "agent_notes": "",
-      "last_updated": "2025-01-31"
+      "evidence": [
+        "pytest tests/ -v -> 9 passed (test_task_persists_after_simulated_restart: two separate TestClient lifespan cycles against the same DB file, plus all prior tests still green)",
+        "Manual: curl POST a task, killed the uvicorn process, confirmed tasks.db exists on disk (12288 bytes), restarted uvicorn, curl GET /tasks returned the same task unchanged",
+        "docs/ARCHITECTURE.md documents DB_PATH (repo root tasks.db, TODOLIST_DB_PATH override, gitignored)"
+      ],
+      "agent_notes": "No implementation change needed — backend/database.py already used a real on-disk sqlite3 file (not :memory:) since feat-001, so persistence across restarts was already correct by construction. This feature's work was writing the test that proves it and documenting the DB location.",
+      "last_updated": "2026-09-25"
     },
     {
       "id": "feat-006",

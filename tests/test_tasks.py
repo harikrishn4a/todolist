@@ -1,3 +1,11 @@
+import os
+import tempfile
+
+from fastapi.testclient import TestClient
+
+from backend import database
+
+
 def test_user_can_add_a_task(client):
     response = client.post("/tasks", json={"title": "Buy milk"})
 
@@ -69,3 +77,20 @@ def test_user_can_mark_a_completed_task_incomplete(client):
 
     assert response.status_code == 200
     assert response.json()["completed"] is False
+
+
+def test_task_persists_after_simulated_restart():
+    fd, path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    database.DB_PATH = path
+
+    from backend.main import app
+
+    with TestClient(app) as first_lifespan:
+        created = first_lifespan.post("/tasks", json={"title": "Buy milk"}).json()
+
+    with TestClient(app) as second_lifespan:
+        listed = second_lifespan.get("/tasks").json()
+
+    os.remove(path)
+    assert any(task["id"] == created["id"] and task["title"] == "Buy milk" for task in listed)

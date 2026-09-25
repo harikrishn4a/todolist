@@ -65,3 +65,17 @@ Must NOT:
 - Use a single generic `fetch(endpoint, options)` style interface where mocking requires conditional branching
 
 Use dependency injection — pass external dependencies in rather than constructing them internally.
+
+---
+
+# Persistence (feat-005)
+
+The SQLite database file lives at `<repo root>/tasks.db` (see
+`backend/database.py:DB_PATH`), overridable via the `TODOLIST_DB_PATH`
+env var. It is a real on-disk file, not `:memory:`, so every write
+made through `get_connection()` survives the FastAPI process exiting
+and restarting — `init_db()` runs `CREATE TABLE IF NOT EXISTS` on
+startup, so re-running it against an existing file is a no-op that
+doesn't touch existing rows. `tasks.db` is gitignored and never
+checked in. Tests point `DB_PATH` at an isolated temp file per test
+(see `tests/conftest.py`) so they never touch the dev DB.

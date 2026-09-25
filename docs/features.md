@@ -123,11 +123,11 @@ Implemented via TDD by extending the existing PATCH /tasks/{id} seam rather than
 Tasks added, edited, or completed remain present and correct after the backend process is restarted.
 
 **Tasks:**
-- [ ] Initialise SQLite database and tasks table on FastAPI startup (if not already existing)
-- [ ] Ensure all write endpoints (POST, PATCH, DELETE) commit to SQLite
-- [ ] Write pytest test that verifies a created task is returned by GET /tasks after a simulated restart (new app instance, same DB file)
-- [ ] Confirm pytest passes
-- [ ] Document DB file location in docs/ARCHITECTURE.md
+- [x] Initialise SQLite database and tasks table on FastAPI startup (if not already existing)
+- [x] Ensure all write endpoints (POST, PATCH, DELETE) commit to SQLite
+- [x] Write pytest test that verifies a created task is returned by GET /tasks after a simulated restart (new app instance, same DB file)
+- [x] Confirm pytest passes
+- [x] Document DB file location in docs/ARCHITECTURE.md
 
 **Acceptance criteria:**
 - GET /tasks returns all previously created tasks after the uvicorn process is stopped and restarted
@@ -139,7 +139,7 @@ Tasks added, edited, or completed remain present and correct after the backend p
 - Multi-user or networked DB
 
 **Notes:**
-Not yet documented
+Persistence across restarts was already correct by construction since feat-001 (backend/database.py connects to a real on-disk `tasks.db` file via sqlite3, never `:memory:`, and every route commits before returning). This feature's actual work was proving it: a pytest test that runs two separate `TestClient(app)` lifespan cycles against the same DB file and confirms a task created in the first is visible in the second, plus documenting `DB_PATH` in docs/ARCHITECTURE.md. Also manually verified with a real `uvicorn` process kill + restart via curl.
 
 ---
 
