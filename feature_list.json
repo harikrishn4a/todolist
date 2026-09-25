@@ -1,0 +1,138 @@
+{
+  "project": "Todolist App",
+  "last_updated": "2025-01-31",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true
+  },
+  "status_legend": {
+    "not_started": "Work has not begun.",
+    "in_progress": "Currently the active task. Only one feature may have this status.",
+    "blocked": "Cannot continue until the documented blocker is resolved.",
+    "passing": "Required verification passed and evidence is recorded.",
+    "unsure": "Status not determinable from the documents; needs git history / Stage 3 analyze to confirm."
+  },
+  "features": [
+    {
+      "id": "feat-001",
+      "priority": 1,
+      "area": "Backend / API",
+      "title": "Add a task",
+      "user_visible_behavior": "User submits a task title via the frontend form; the task is saved to SQLite and appears in the task list without a page refresh.",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes for POST /tasks endpoint (creates a task and returns 201 with task JSON)",
+        "Task persists after server restart (GET /tasks returns it on next boot)",
+        "Frontend form submits and new task appears in the list"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    },
+    {
+      "id": "feat-002",
+      "priority": 2,
+      "area": "Backend / API",
+      "title": "Edit a task",
+      "user_visible_behavior": "User clicks a task to edit its title inline; the updated title is saved and reflected immediately in the list.",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes for PUT /tasks/{id} endpoint (updates task title, returns 200 with updated task JSON)",
+        "Editing a non-existent task returns 404",
+        "Frontend reflects the updated title without a page refresh"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    },
+    {
+      "id": "feat-003",
+      "priority": 3,
+      "area": "Backend / API",
+      "title": "Delete a task",
+      "user_visible_behavior": "User clicks a delete button on a task; the task is removed from the list and from the database permanently.",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes for DELETE /tasks/{id} endpoint (removes task, returns 204)",
+        "Deleting a non-existent task returns 404",
+        "Frontend removes the task from the list immediately after deletion"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    },
+    {
+      "id": "feat-004",
+      "priority": 4,
+      "area": "Backend / API",
+      "title": "Mark a task complete / incomplete",
+      "user_visible_behavior": "User clicks a checkbox on a task to toggle its completion state; the visual styling updates immediately (e.g. strikethrough for completed tasks).",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes for PATCH /tasks/{id} endpoint toggling the completed boolean (returns 200 with updated task JSON)",
+        "Toggling a non-existent task returns 404",
+        "Frontend checkbox reflects the correct state and applies completed styling"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    },
+    {
+      "id": "feat-005",
+      "priority": 5,
+      "area": "Persistence",
+      "title": "Persistence — tasks survive server restarts",
+      "user_visible_behavior": "All tasks (titles, completion states, due dates) are present after the uvicorn server is stopped and restarted; no data is lost.",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes confirming SQLite DB file is used (not in-memory)",
+        "Create tasks, restart uvicorn, GET /tasks returns all previously created tasks",
+        "DB file exists on disk at expected path after first run"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    },
+    {
+      "id": "feat-006",
+      "priority": 6,
+      "area": "Frontend / Filtering",
+      "title": "Filtering and sorting",
+      "user_visible_behavior": "User can filter the task list to show All / Active / Completed tasks, and can sort by creation order or due date using UI controls.",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes for GET /tasks?filter=active, GET /tasks?filter=completed, GET /tasks?sort=due_date endpoints (or equivalent query params)",
+        "Frontend filter buttons update the displayed list correctly",
+        "Sort by creation order and sort by due date both produce correctly ordered lists"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    },
+    {
+      "id": "feat-007",
+      "priority": 7,
+      "area": "Frontend / UX",
+      "title": "Due dates with overdue highlighting",
+      "user_visible_behavior": "User can set an optional due date on a task; incomplete tasks whose due date is in the past are visually flagged (e.g. red text or background) in the task list.",
+      "status": "unsure",
+      "blocked_reason": "",
+      "verification": [
+        "pytest passes for POST /tasks and PUT /tasks/{id} with optional due_date field (ISO 8601 string, nullable)",
+        "GET /tasks response includes due_date field for each task",
+        "Frontend renders a date picker or input for due date",
+        "Overdue incomplete tasks display a distinct visual style compared to non-overdue tasks"
+      ],
+      "evidence": [],
+      "agent_notes": "",
+      "last_updated": "2025-01-31"
+    }
+  ]
+}
