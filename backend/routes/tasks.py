@@ -42,3 +42,16 @@ def update_task(task_id: int, task: TaskUpdate) -> Task:
     row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
     conn.close()
     return Task(id=row["id"], title=row["title"], completed=bool(row["completed"]), created_at=row["created_at"])
+
+
+@router.delete("/tasks/{task_id}", status_code=204)
+def delete_task(task_id: int) -> None:
+    conn = get_connection()
+    row = conn.execute("SELECT id FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    if row is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+    conn.commit()
+    conn.close()

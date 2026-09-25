@@ -4,9 +4,10 @@ import type { Task } from "../api";
 interface TaskItemProps {
   task: Task;
   onEdit: (id: number, title: string) => void;
+  onDelete: (id: number) => void;
 }
 
-function TaskItem({ task, onEdit }: TaskItemProps) {
+function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
 
@@ -37,8 +38,17 @@ function TaskItem({ task, onEdit }: TaskItemProps) {
   }
 
   return (
-    <li onClick={() => setEditing(true)} className="cursor-text text-neutral-900">
-      {task.title}
+    <li className="group flex items-center justify-between text-neutral-900">
+      <span onClick={() => setEditing(true)} className="cursor-text">
+        {task.title}
+      </span>
+      <button
+        onClick={() => onDelete(task.id)}
+        aria-label={`Delete ${task.title}`}
+        className="text-neutral-300 opacity-0 transition-opacity hover:text-neutral-900 group-hover:opacity-100"
+      >
+        ×
+      </button>
     </li>
   );
 }

@@ -33,3 +33,19 @@ def test_editing_a_task_with_empty_title_returns_422(client):
     response = client.patch(f"/tasks/{created['id']}", json={"title": ""})
 
     assert response.status_code == 422
+
+
+def test_user_can_delete_a_task(client):
+    created = client.post("/tasks", json={"title": "Buy milk"}).json()
+
+    response = client.delete(f"/tasks/{created['id']}")
+
+    assert response.status_code == 204
+    listed = client.get("/tasks").json()
+    assert all(task["id"] != created["id"] for task in listed)
+
+
+def test_deleting_a_nonexistent_task_returns_404(client):
+    response = client.delete("/tasks/999999")
+
+    assert response.status_code == 404

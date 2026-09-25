@@ -63,16 +63,20 @@
       "area": "Backend / API",
       "title": "Delete a task",
       "user_visible_behavior": "User clicks a delete button on a task; the task is removed from the list and from the database permanently.",
-      "status": "unsure",
+      "status": "passing",
       "blocked_reason": "",
       "verification": [
         "pytest passes for DELETE /tasks/{id} endpoint (removes task, returns 204)",
         "Deleting a non-existent task returns 404",
         "Frontend removes the task from the list immediately after deletion"
       ],
-      "evidence": [],
-      "agent_notes": "",
-      "last_updated": "2025-01-31"
+      "evidence": [
+        "pytest tests/ -v -> 6 passed (test_user_can_delete_a_task, test_deleting_a_nonexistent_task_returns_404, plus all prior tests still green)",
+        "Playwright screenshot: hovered 'Buy milk', clicked its delete control -> removed from list immediately, 'Walk the dog' unaffected, no reload; console --errors empty",
+        "cd frontend && npm run build/lint -> clean"
+      ],
+      "agent_notes": "Added DELETE /tasks/{id} in backend/routes/tasks.py (404 on missing id, 204 on success). Frontend: hover-revealed delete control (x) on TaskItem, api.ts deleteTask, App.tsx handleDelete filters local state.",
+      "last_updated": "2026-09-25"
     },
     {
       "id": "feat-004",

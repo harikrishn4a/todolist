@@ -29,3 +29,7 @@ export async function updateTask(id: number, title: string): Promise<Task> {
   });
   return res.json();
 }
+
+export async function deleteTask(id: number): Promise<void> {
+  await fetch(`${API_BASE_URL}/tasks/${id}`, { method: "DELETE" });
+}

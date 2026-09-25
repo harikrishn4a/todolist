@@ -70,11 +70,11 @@ Implemented via TDD in three vertical slices at the PATCH /tasks/{id} seam: (1) 
 Each task has a delete control (button or icon). Clicking it removes the task from the list immediately.
 
 **Tasks:**
-- [ ] Write failing pytest test for DELETE /tasks/{id} endpoint (returns 204 on success)
-- [ ] Implement DELETE /tasks/{id} route in FastAPI
-- [ ] Confirm pytest passes
-- [ ] Add delete button to React task item
-- [ ] Call DELETE /tasks/{id} via fetch and remove task from local state on success
+- [x] Write failing pytest test for DELETE /tasks/{id} endpoint (returns 204 on success)
+- [x] Implement DELETE /tasks/{id} route in FastAPI
+- [x] Confirm pytest passes
+- [x] Add delete button to React task item
+- [x] Call DELETE /tasks/{id} via fetch and remove task from local state on success
 
 **Acceptance criteria:**
 - DELETE /tasks/{id} returns HTTP 204 and the task no longer appears in GET /tasks
@@ -86,7 +86,7 @@ Each task has a delete control (button or icon). Clicking it removes the task fr
 - Bulk delete
 
 **Notes:**
-Not yet documented
+Implemented via TDD in two vertical slices at the DELETE /tasks/{id} seam: (1) deleting an existing task returns 204 and it's gone from GET /tasks, (2) deleting a non-existent id returns 404. Frontend: hover-revealed "×" delete control on TaskItem (kept subtle per the minimalist aesthetic), api.ts deleteTask, App.tsx filters local state. Verified end-to-end with a Playwright-driven browser screenshot.
 
 ---
 
