@@ -2,6 +2,8 @@
 
 A local task manager: FastAPI + SQLite on the backend, React + TypeScript + Vite on the frontend.
 
+![todo.md task list](./docs/screenshots/16-ui-task-list.jpg)
+
 ## Requirements
 
 - Python 3.11+
@@ -49,3 +51,21 @@ make check     # typecheck, lint, frontend build, pytest
 make lint      # ruff + eslint
 make build     # production frontend bundle
 ```
+
+## What you can do
+
+Add a task with an optional due date:
+
+![Adding a task](./docs/screenshots/15-ui-add-task.jpg)
+
+Click a task to edit it:
+
+![Editing a task](./docs/screenshots/17-ui-edit-task.jpg)
+
+Mark tasks complete:
+
+![Completed and active tasks](./docs/screenshots/18-ui-mark-complete.jpg)
+
+Filter by All, Active, or Completed:
+
+![Completed filter](./docs/screenshots/19-ui-filter-completed.jpg)
