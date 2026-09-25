@@ -1,8 +1,8 @@
 # Project Progress
 
 ## Current State
-- Latest commit: feat-005: Persistence — tasks survive server restarts
-- Test status: 9/9 passing (`pytest tests/ -v`)
+- Latest commit: aesthetic pass on frontend (checkbox accent color) after feat-006/feat-007
+- Test status: 17/17 passing (`pytest tests/ -v`)
 - Lint: ruff clean (backend), eslint clean (frontend)
 - Frontend: `npm run build` and `npm run typecheck` both clean
 
@@ -18,13 +18,16 @@
 - [x] feat-003: Delete a task — DELETE /tasks/{id}, hover-revealed delete control
 - [x] feat-004: Mark a task complete/incomplete — PATCH /tasks/{id} (completed), checkbox + strikethrough UI
 - [x] feat-005: Persistence — tasks survive server restarts (proven with a two-lifespan pytest test + manual uvicorn restart)
+- [x] feat-006: Filtering and sorting — GET /tasks?filter=all|active|completed&sort=created_at, FilterBar UI
+- [x] feat-007: Due dates with overdue highlighting — optional due_date field, sort=due_date (nulls last), date input, red overdue styling
+- [x] Frontend aesthetic pass — confirmed no cards/heavy borders/clutter against docs/CONSTRAINTS.md; fixed the one stray default-blue checkbox to accent-neutral-900 to keep the grayscale + single-red-accent palette disciplined
 
 ## In Progress
-- None. All of feat-001 through feat-005 are `passing`. Session stopped here per instruction — feat-006 (filtering/sorting) and feat-007 (due dates) not started.
+- None. All of feat-001 through feat-007 are `passing`.
 
 ## Known Issues
-- None known. All verification commands pass; see docs/SESSION-HANDOFF.md for exact evidence.
+- TaskUpdate.due_date can't be explicitly cleared back to null via PATCH (only-provided-fields-applied semantics treat null and "not provided" the same way) — not required by any test/acceptance criteria, so left as-is rather than adding an untested sentinel-based workaround.
+- No UI control to edit an existing task's due date (backend PATCH supports it and is tested); only settable at creation time in the UI.
 
 ## Next Steps
-1. feat-006: Filtering and sorting — GET /tasks?filter=... and ?sort=... query params, plus UI controls
-2. feat-007: Due dates with overdue highlighting — optional due_date field, date input, overdue styling
+None currently assigned — all core (feat-001..005) and additional (feat-006, feat-007) features from feature_list.json are passing.

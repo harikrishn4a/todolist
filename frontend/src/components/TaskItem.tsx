@@ -47,6 +47,7 @@ function TaskItem({ task, onEdit, onDelete, onToggleCompleted }: TaskItemProps) 
         checked={task.completed}
         onChange={(e) => onToggleCompleted(task.id, e.target.checked)}
         aria-label={`Mark ${task.title} as ${task.completed ? "incomplete" : "complete"}`}
+        className="accent-neutral-900"
       />
       <span
         onClick={() => setEditing(true)}
