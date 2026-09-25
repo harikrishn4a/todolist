@@ -37,7 +37,10 @@ def update_task(task_id: int, task: TaskUpdate) -> Task:
         conn.close()
         raise HTTPException(status_code=404, detail="Task not found")
 
-    conn.execute("UPDATE tasks SET title = ? WHERE id = ?", (task.title, task_id))
+    if task.title is not None:
+        conn.execute("UPDATE tasks SET title = ? WHERE id = ?", (task.title, task_id))
+    if task.completed is not None:
+        conn.execute("UPDATE tasks SET completed = ? WHERE id = ?", (int(task.completed), task_id))
     conn.commit()
     row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
     conn.close()

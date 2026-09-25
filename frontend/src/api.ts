@@ -33,3 +33,12 @@ export async function updateTask(id: number, title: string): Promise<Task> {
 export async function deleteTask(id: number): Promise<void> {
   await fetch(`${API_BASE_URL}/tasks/${id}`, { method: "DELETE" });
 }
+
+export async function toggleTaskCompleted(id: number, completed: boolean): Promise<Task> {
+  const res = await fetch(`${API_BASE_URL}/tasks/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ completed }),
+  });
+  return res.json();
+}

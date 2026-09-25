@@ -49,3 +49,23 @@ def test_deleting_a_nonexistent_task_returns_404(client):
     response = client.delete("/tasks/999999")
 
     assert response.status_code == 404
+
+
+def test_user_can_mark_a_task_complete(client):
+    created = client.post("/tasks", json={"title": "Buy milk"}).json()
+
+    response = client.patch(f"/tasks/{created['id']}", json={"completed": True})
+
+    assert response.status_code == 200
+    assert response.json()["completed"] is True
+    assert response.json()["title"] == "Buy milk"
+
+
+def test_user_can_mark_a_completed_task_incomplete(client):
+    created = client.post("/tasks", json={"title": "Buy milk"}).json()
+    client.patch(f"/tasks/{created['id']}", json={"completed": True})
+
+    response = client.patch(f"/tasks/{created['id']}", json={"completed": False})
+
+    assert response.status_code == 200
+    assert response.json()["completed"] is False

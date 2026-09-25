@@ -1,33 +1,34 @@
 # TASK.md — Sprint Contract
 
 ## Feature
-- ID: feat-003
-- Title: Delete a task
+- ID: feat-004
+- Title: Mark a task complete / incomplete
 
 ## Scope — what will change
-- Add `DELETE /tasks/{id}` FastAPI endpoint
-- Return 404 for a non-existent task id
-- Add delete control to the React task item
+- Extend `PATCH /tasks/{id}` to accept an optional `completed` boolean (title becomes optional too, so either field can be sent independently)
+- Add checkbox/toggle to the React task item
 
 ## Exclusions — what will NOT change
-- No soft-delete/undo, no bulk delete
+- No completion timestamps, no bulk mark-all-complete
 
 ## Files expected to change
 - tests/test_tasks.py
-- backend/routes/tasks.py
-- frontend/src/components/TaskItem.tsx
-- frontend/src/api.ts (deleteTask)
+- backend/models.py (TaskUpdate: title and completed both optional)
+- backend/routes/tasks.py (update_task applies only provided fields)
+- frontend/src/components/TaskItem.tsx (checkbox, strikethrough style)
+- frontend/src/api.ts (toggleTask)
 - frontend/src/App.tsx
 
 ## Verification standard
-- `pytest tests/ -v` — all green
-- Manual curl: DELETE an existing task, DELETE a non-existent task
+- `pytest tests/ -v` — all green, including existing title-edit tests
+- Manual curl: PATCH {"completed": true} and {"completed": false}
 - `cd frontend && npm run build` — clean
 
 ## Acceptance criteria
-- DELETE /tasks/{id} returns 204 and the task no longer appears in GET /tasks
-- DELETE /tasks/{id} with a non-existent id returns 404
-- Task disappears from the UI immediately, no reload
+- PATCH /tasks/{id} with {"completed": true} returns 200 with completed: true
+- PATCH /tasks/{id} with {"completed": false} returns 200 with completed: false
+- Completed tasks show strikethrough styling
+- Completed state persists (same SQLite row)
 
 ## Invariants — must remain true throughout
-- feat-001/feat-002 tests stay green
+- feat-001/002/003 tests stay green — editing title alone must not reset completed, and vice versa

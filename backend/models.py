@@ -6,7 +6,8 @@ class TaskCreate(BaseModel):
 
 
 class TaskUpdate(BaseModel):
-    title: str = Field(min_length=1)
+    title: str | None = Field(default=None, min_length=1)
+    completed: bool | None = None
 
 
 class Task(BaseModel):

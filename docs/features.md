@@ -96,11 +96,11 @@ Implemented via TDD in two vertical slices at the DELETE /tasks/{id} seam: (1) d
 Each task has a checkbox or toggle. Clicking it marks the task complete (adds a visual strikethrough or muted style) or incomplete. The state persists.
 
 **Tasks:**
-- [ ] Write failing pytest test for PATCH /tasks/{id} toggling `completed` field (returns 200 + updated task JSON)
-- [ ] Implement completed toggle in PATCH /tasks/{id} (reuse or extend Feature 002 endpoint)
-- [ ] Confirm pytest passes
-- [ ] Add checkbox/toggle to React task item
-- [ ] Call PATCH /tasks/{id} with `{ completed: true/false }` and update UI state
+- [x] Write failing pytest test for PATCH /tasks/{id} toggling `completed` field (returns 200 + updated task JSON)
+- [x] Implement completed toggle in PATCH /tasks/{id} (reuse or extend Feature 002 endpoint)
+- [x] Confirm pytest passes
+- [x] Add checkbox/toggle to React task item
+- [x] Call PATCH /tasks/{id} with `{ completed: true/false }` and update UI state
 
 **Acceptance criteria:**
 - PATCH /tasks/{id} with `{ "completed": true }` returns HTTP 200 with `completed: true`
@@ -113,7 +113,7 @@ Each task has a checkbox or toggle. Clicking it marks the task complete (adds a 
 - Bulk mark-all-complete
 
 **Notes:**
-Not yet documented
+Implemented via TDD by extending the existing PATCH /tasks/{id} seam rather than a new route: TaskUpdate now has both `title` and `completed` optional, and update_task only touches columns that were actually provided (so editing title alone never resets completed, and vice versa — the invariant from feat-002/003 held throughout). Second slice (mark incomplete) was already green from the first slice's generalized implementation, which confirmed the design rather than requiring new code. Frontend: checkbox + strikethrough/muted styling on TaskItem. Verified end-to-end with a Playwright-driven browser screenshot.
 
 ---
 

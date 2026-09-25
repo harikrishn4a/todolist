@@ -84,16 +84,20 @@
       "area": "Backend / API",
       "title": "Mark a task complete / incomplete",
       "user_visible_behavior": "User clicks a checkbox on a task to toggle its completion state; the visual styling updates immediately (e.g. strikethrough for completed tasks).",
-      "status": "unsure",
+      "status": "passing",
       "blocked_reason": "",
       "verification": [
         "pytest passes for PATCH /tasks/{id} endpoint toggling the completed boolean (returns 200 with updated task JSON)",
-        "Toggling a non-existent task returns 404",
+        "Toggling a non-existent task returns 404 (covered by existing test_editing_a_nonexistent_task_returns_404, same route)",
         "Frontend checkbox reflects the correct state and applies completed styling"
       ],
-      "evidence": [],
-      "agent_notes": "",
-      "last_updated": "2025-01-31"
+      "evidence": [
+        "pytest tests/ -v -> 8 passed (test_user_can_mark_a_task_complete, test_user_can_mark_a_completed_task_incomplete, plus all prior tests still green)",
+        "Playwright screenshot: clicked the checkbox on 'Buy milk' -> checkbox checked, title gets strikethrough + muted color, no reload; console --errors empty",
+        "cd frontend && npm run build/lint -> clean"
+      ],
+      "agent_notes": "Extended TaskUpdate (title and completed both optional) and update_task in backend/routes/tasks.py to apply only provided fields, reusing the existing PATCH /tasks/{id} route and its 404 handling. Frontend: checkbox + conditional strikethrough on TaskItem, api.ts toggleTaskCompleted, App.tsx handleToggleCompleted.",
+      "last_updated": "2026-09-25"
     },
     {
       "id": "feat-005",

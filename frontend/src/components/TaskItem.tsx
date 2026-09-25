@@ -5,9 +5,10 @@ interface TaskItemProps {
   task: Task;
   onEdit: (id: number, title: string) => void;
   onDelete: (id: number) => void;
+  onToggleCompleted: (id: number, completed: boolean) => void;
 }
 
-function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
+function TaskItem({ task, onEdit, onDelete, onToggleCompleted }: TaskItemProps) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
 
@@ -38,8 +39,17 @@ function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
   }
 
   return (
-    <li className="group flex items-center justify-between text-neutral-900">
-      <span onClick={() => setEditing(true)} className="cursor-text">
+    <li className="group flex items-center gap-3 text-neutral-900">
+      <input
+        type="checkbox"
+        checked={task.completed}
+        onChange={(e) => onToggleCompleted(task.id, e.target.checked)}
+        aria-label={`Mark ${task.title} as ${task.completed ? "incomplete" : "complete"}`}
+      />
+      <span
+        onClick={() => setEditing(true)}
+        className={`flex-1 cursor-text ${task.completed ? "text-neutral-400 line-through" : ""}`}
+      >
         {task.title}
       </span>
       <button
