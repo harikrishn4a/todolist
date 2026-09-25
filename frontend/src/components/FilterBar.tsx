@@ -29,6 +29,7 @@ function FilterBar({ filter, onFilterChange, sort, onSortChange }: FilterBarProp
         className="bg-transparent text-neutral-500 outline-none"
       >
         <option value="created_at">Created</option>
+        <option value="due_date">Due date</option>
       </select>
     </div>
   );

@@ -179,13 +179,13 @@ Implemented via TDD: two vertical slices for filter=active/completed (WHERE clau
 When adding or editing a task the user can optionally set a due date. Tasks whose due date is in the past and are not yet completed are visually flagged (e.g., red or muted-warning text color) to indicate they are overdue.
 
 **Tasks:**
-- [ ] Write failing pytest test for POST /tasks accepting optional `due_date` field (ISO 8601 date string)
-- [ ] Write failing pytest test for PATCH /tasks/{id} accepting optional `due_date` field
-- [ ] Add `due_date` column to SQLite tasks table; handle nullable
-- [ ] Confirm pytest passes
-- [ ] Add optional due date input to React add-task form and edit UX
-- [ ] Display due date on each task item
-- [ ] Apply overdue highlight style when `due_date < today` and `completed === false`
+- [x] Write failing pytest test for POST /tasks accepting optional `due_date` field (ISO 8601 date string)
+- [x] Write failing pytest test for PATCH /tasks/{id} accepting optional `due_date` field
+- [x] Add `due_date` column to SQLite tasks table; handle nullable
+- [x] Confirm pytest passes
+- [x] Add optional due date input to React add-task form (edit UX for changing due_date on an *existing* task is backend-only — PATCH /tasks/{id} supports it and is tested, but no UI control was added for it; not required by the acceptance criteria below)
+- [x] Display due date on each task item
+- [x] Apply overdue highlight style when `due_date < today` and `completed === false`
 
 **Acceptance criteria:**
 - POST /tasks and PATCH /tasks/{id} accept an optional `due_date` in ISO 8601 format (YYYY-MM-DD); invalid formats return HTTP 422
@@ -198,4 +198,4 @@ When adding or editing a task the user can optionally set a due date. Tasks whos
 - Reminder notifications or emails
 
 **Notes:**
-Not yet documented
+Implemented via TDD in five vertical slices at POST/PATCH/GET /tasks: (1) due_date null by default, (2) due_date persists when provided, (3) invalid format returns 422 (Pydantic field_validator using date.fromisoformat), (4) PATCH sets due_date on an existing task, (5) sort=due_date orders ascending with nulls last, extending feat-006's order_by branch. Refactored the four duplicated row->Task construction blocks into a `_row_to_task` helper since this feature touched all of them. Frontend: date input on the add form, due date display + red overdue styling on TaskItem (incomplete and past due only), "Due date" added to the sort selector. No UI was added to edit an existing task's due date (backend supports it, not required by the acceptance criteria).

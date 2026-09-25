@@ -5,21 +5,22 @@ export interface Task {
   title: string;
   completed: boolean;
   created_at: string;
+  due_date: string | null;
 }
 
 export type Filter = "all" | "active" | "completed";
-export type Sort = "created_at";
+export type Sort = "created_at" | "due_date";
 
 export async function listTasks(filter: Filter = "all", sort: Sort = "created_at"): Promise<Task[]> {
   const res = await fetch(`${API_BASE_URL}/tasks?filter=${filter}&sort=${sort}`);
   return res.json();
 }
 
-export async function addTask(title: string): Promise<Task> {
+export async function addTask(title: string, dueDate?: string): Promise<Task> {
   const res = await fetch(`${API_BASE_URL}/tasks`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ title, due_date: dueDate || null }),
   });
   return res.json();
 }

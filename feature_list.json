@@ -148,7 +148,7 @@
       "area": "Frontend / UX",
       "title": "Due dates with overdue highlighting",
       "user_visible_behavior": "User can set an optional due date on a task; incomplete tasks whose due date is in the past are visually flagged (e.g. red text or background) in the task list.",
-      "status": "unsure",
+      "status": "passing",
       "blocked_reason": "",
       "verification": [
         "pytest passes for POST /tasks and PATCH /tasks/{id} with optional due_date field (ISO 8601 string, nullable)",
@@ -156,9 +156,13 @@
         "Frontend renders a date picker or input for due date",
         "Overdue incomplete tasks display a distinct visual style compared to non-overdue tasks"
       ],
-      "evidence": [],
-      "agent_notes": "",
-      "last_updated": "2025-01-31"
+      "evidence": [
+        "pytest tests/ -v -> 17 passed (due_date null default, due_date persisted, invalid format -> 422, PATCH due_date, sort=due_date ascending with nulls last, plus all prior tests still green)",
+        "Playwright screenshot: seeded an overdue task (2020-01-01), a future task (2099-01-01), and a no-due-date task; added a 4th task via the UI date input; sorted by Due date -> ascending order with the no-due-date task last; overdue task rendered in red (rgb(220,38,38)) vs muted gray (rgb(163,163,163)) for the future task; console --errors empty",
+        "cd frontend && npm run build/lint -> clean"
+      ],
+      "agent_notes": "backend/models.py validates due_date as ISO 8601 via date.fromisoformat in a shared field_validator (invalid format -> 422 automatically). backend/database.py adds a nullable due_date column. list_tasks' order_by branch extended with sort=due_date -> 'due_date IS NULL, due_date' (nulls last). Refactored the 4 duplicated Task(...) row-construction blocks into a single _row_to_task helper since this feature touched all of them. Note: TaskUpdate.due_date follows the same only-provided-fields pattern as title/completed, which means a due date can be set or changed via PATCH but not explicitly cleared back to null in this implementation (not required by the spec/tests) — flagged for awareness, not fixed since untested behavior wasn't added speculatively. Frontend: date input on TaskForm, due date + overdue (red) styling on TaskItem (incomplete AND due_date < today), 'Due date' option added to FilterBar's sort select.",
+      "last_updated": "2026-09-25"
     }
   ]
 }

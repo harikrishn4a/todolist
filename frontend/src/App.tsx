@@ -26,8 +26,8 @@ function App() {
     listTasks(filter, sort).then(setTasks);
   }
 
-  async function handleAdd(title: string) {
-    await addTask(title);
+  async function handleAdd(title: string, dueDate?: string) {
+    await addTask(title, dueDate);
     refresh();
   }
 

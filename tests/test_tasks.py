@@ -103,6 +103,34 @@ def test_filtering_completed_tasks_excludes_active(client):
     assert active["id"] not in ids
 
 
+def test_creating_a_task_without_due_date_returns_null(client):
+    response = client.post("/tasks", json={"title": "Buy milk"})
+
+    assert response.json()["due_date"] is None
+
+
+def test_creating_a_task_with_a_due_date_persists_it(client):
+    response = client.post("/tasks", json={"title": "Buy milk", "due_date": "2026-01-15"})
+
+    assert response.json()["due_date"] == "2026-01-15"
+
+
+def test_creating_a_task_with_an_invalid_due_date_returns_422(client):
+    response = client.post("/tasks", json={"title": "Buy milk", "due_date": "not-a-date"})
+
+    assert response.status_code == 422
+
+
+def test_user_can_set_a_due_date_on_an_existing_task(client):
+    created = client.post("/tasks", json={"title": "Buy milk"}).json()
+
+    response = client.patch(f"/tasks/{created['id']}", json={"due_date": "2026-01-15"})
+
+    assert response.status_code == 200
+    assert response.json()["due_date"] == "2026-01-15"
+    assert response.json()["title"] == "Buy milk"
+
+
 def test_sorting_by_created_at_returns_ascending_creation_order(client):
     first = client.post("/tasks", json={"title": "First"}).json()
     second = client.post("/tasks", json={"title": "Second"}).json()
@@ -111,6 +139,16 @@ def test_sorting_by_created_at_returns_ascending_creation_order(client):
     listed = client.get("/tasks?sort=created_at").json()
 
     assert [task["id"] for task in listed] == [first["id"], second["id"], third["id"]]
+
+
+def test_sorting_by_due_date_orders_ascending_with_nulls_last(client):
+    no_due_date = client.post("/tasks", json={"title": "No due date"}).json()
+    due_later = client.post("/tasks", json={"title": "Due later", "due_date": "2026-02-01"}).json()
+    due_sooner = client.post("/tasks", json={"title": "Due sooner", "due_date": "2026-01-01"}).json()
+
+    listed = client.get("/tasks?sort=due_date").json()
+
+    assert [task["id"] for task in listed] == [due_sooner["id"], due_later["id"], no_due_date["id"]]
 
 
 def test_task_persists_after_simulated_restart():

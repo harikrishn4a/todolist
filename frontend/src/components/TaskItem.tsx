@@ -38,6 +38,8 @@ function TaskItem({ task, onEdit, onDelete, onToggleCompleted }: TaskItemProps) 
     );
   }
 
+  const isOverdue = !task.completed && task.due_date !== null && task.due_date < new Date().toISOString().slice(0, 10);
+
   return (
     <li className="group flex items-center gap-3 text-neutral-900">
       <input
@@ -52,6 +54,9 @@ function TaskItem({ task, onEdit, onDelete, onToggleCompleted }: TaskItemProps) 
       >
         {task.title}
       </span>
+      {task.due_date && (
+        <span className={`text-sm ${isOverdue ? "text-red-600" : "text-neutral-400"}`}>{task.due_date}</span>
+      )}
       <button
         onClick={() => onDelete(task.id)}
         aria-label={`Delete ${task.title}`}
