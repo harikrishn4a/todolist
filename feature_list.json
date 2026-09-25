@@ -42,16 +42,20 @@
       "area": "Backend / API",
       "title": "Edit a task",
       "user_visible_behavior": "User clicks a task to edit its title inline; the updated title is saved and reflected immediately in the list.",
-      "status": "unsure",
+      "status": "passing",
       "blocked_reason": "",
       "verification": [
         "pytest passes for PATCH /tasks/{id} endpoint (updates task title, returns 200 with updated task JSON)",
         "Editing a non-existent task returns 404",
         "Frontend reflects the updated title without a page refresh"
       ],
-      "evidence": [],
-      "agent_notes": "",
-      "last_updated": "2025-01-31"
+      "evidence": [
+        "pytest tests/ -v -> 4 passed (test_user_can_edit_a_task_title, test_editing_a_nonexistent_task_returns_404, test_editing_a_task_with_empty_title_returns_422, plus feat-001 test still green)",
+        "Playwright screenshot: clicked 'Buy milk' in the UI, edited inline to 'Buy oat milk', pressed Enter -> list shows only the updated title, no reload; console --errors empty",
+        "cd frontend && npm run build/lint -> clean"
+      ],
+      "agent_notes": "Added TaskUpdate schema (title min_length=1), PATCH /tasks/{id} in backend/routes/tasks.py with 404 on missing id. Frontend: TaskItem.tsx (click-to-edit, Enter/blur to commit), TaskList delegates to it, api.ts updateTask, App.tsx handleEdit.",
+      "last_updated": "2026-09-25"
     },
     {
       "id": "feat-003",

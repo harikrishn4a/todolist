@@ -43,11 +43,11 @@ Implemented via TDD: one failing pytest test at the POST /tasks seam (tests/test
 Clicking a task title makes it editable in place (or opens an edit field). The user changes the title and confirms; the updated title is saved and displayed.
 
 **Tasks:**
-- [ ] Write failing pytest test for PATCH /tasks/{id} endpoint (update title, returns 200 + updated task JSON)
-- [ ] Implement PATCH /tasks/{id} route in FastAPI
-- [ ] Confirm pytest passes
-- [ ] Add inline edit UX to React task item (click to edit, Enter or blur to save)
-- [ ] Call PATCH /tasks/{id} via fetch and update local state on success
+- [x] Write failing pytest test for PATCH /tasks/{id} endpoint (update title, returns 200 + updated task JSON)
+- [x] Implement PATCH /tasks/{id} route in FastAPI
+- [x] Confirm pytest passes
+- [x] Add inline edit UX to React task item (click to edit, Enter or blur to save)
+- [x] Call PATCH /tasks/{id} via fetch and update local state on success
 
 **Acceptance criteria:**
 - PATCH /tasks/{id} with a valid title returns HTTP 200 and updated task JSON
@@ -60,7 +60,7 @@ Clicking a task title makes it editable in place (or opens an edit field). The u
 - Undo/redo
 
 **Notes:**
-Not yet documented
+Implemented via TDD in three vertical slices at the PATCH /tasks/{id} seam: (1) valid title updates and returns 200, (2) non-existent id returns 404, (3) empty title returns 422 (Pydantic Field min_length=1). Frontend: click-to-edit on TaskItem, commits on Enter or blur, no-ops if unchanged or empty. Verified end-to-end with a Playwright-driven browser screenshot.
 
 ---
 

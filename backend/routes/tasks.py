@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from backend.database import get_connection
-from backend.models import Task, TaskCreate
+from backend.models import Task, TaskCreate, TaskUpdate
 
 router = APIRouter()
 
@@ -27,3 +27,18 @@ def list_tasks() -> list[Task]:
         Task(id=row["id"], title=row["title"], completed=bool(row["completed"]), created_at=row["created_at"])
         for row in rows
     ]
+
+
+@router.patch("/tasks/{task_id}", response_model=Task)
+def update_task(task_id: int, task: TaskUpdate) -> Task:
+    conn = get_connection()
+    row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    if row is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    conn.execute("UPDATE tasks SET title = ? WHERE id = ?", (task.title, task_id))
+    conn.commit()
+    row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    conn.close()
+    return Task(id=row["id"], title=row["title"], completed=bool(row["completed"]), created_at=row["created_at"])

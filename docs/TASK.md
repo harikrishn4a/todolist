@@ -5,44 +5,37 @@ Do not begin implementation until this contract is written.
 Overwrite this file at the start of each new feature.
 
 ## Feature
-- ID: feat-001
-- Title: Add a task
+- ID: feat-002
+- Title: Edit a task
 
 ## Scope — what will change
-- Add `POST /tasks` FastAPI endpoint
-- Add SQLite `tasks` table creation on app startup
-- Add Pydantic request/response schemas for a Task
-- Add React form that posts a new task title and renders it in a list
+- Add `PATCH /tasks/{id}` FastAPI endpoint to update a task's title
+- Return 404 for a non-existent task id
+- Return 422 for an empty title
+- Add inline-edit UX to the React task item
 
 ## Exclusions — what will NOT change
-- No edit, delete, or complete/incomplete behavior (feat-002 through feat-004)
-- No due dates (feat-007)
-- No filtering or sorting (feat-006)
+- No completed-toggle behavior (feat-004) — though the same PATCH route will later be extended for it
+- No due dates, filtering, or sorting
 
 ## Files expected to change
-- tests/conftest.py (new — isolated test DB fixture)
-- tests/test_tasks.py (new — first failing test)
-- backend/models.py (new — Task schemas)
-- backend/database.py (init_db / table creation)
-- backend/routes/tasks.py (new — POST /tasks, GET /tasks)
-- backend/main.py (include tasks router, call init_db on startup)
-- frontend/src/components/TaskForm.tsx (new)
-- frontend/src/components/TaskList.tsx (new)
-- frontend/src/api.ts (addTask, listTasks)
-- frontend/src/App.tsx
+- tests/test_tasks.py (new tests, vertical slices)
+- backend/models.py (TaskUpdate schema)
+- backend/routes/tasks.py (PATCH /tasks/{id})
+- frontend/src/components/TaskList.tsx / TaskItem
+- frontend/src/api.ts (updateTask)
 
 ## Verification standard
-Commands that must pass before this feature is marked done:
-- `pytest tests/ -v` — new test(s) green, none skipped
-- `curl -s -X POST http://localhost:8000/tasks -d '{"title":"Buy milk"}' -H 'Content-Type: application/json'` returns 201 + task JSON
+- `pytest tests/ -v` — all tests green, none skipped
+- Manual curl: PATCH a task title, a non-existent id, and an empty title
 - `cd frontend && npm run build` — clean
 
 ## Acceptance criteria
-- POST /tasks with a valid title returns HTTP 201 and JSON with `id`, `title`, `completed`, `created_at`
-- POST /tasks with a missing/empty title returns HTTP 422
-- Task persists in SQLite (survives a fresh app instance against the same DB file)
-- New task appears in the UI without a full page reload
+- PATCH /tasks/{id} with a valid title returns HTTP 200 and updated task JSON
+- PATCH /tasks/{id} with a non-existent id returns HTTP 404
+- PATCH /tasks/{id} with an empty title returns HTTP 422
+- Updated title is reflected immediately in the UI
 
 ## Invariants — must remain true throughout
-- Tests exercise only the public FastAPI endpoint via TestClient, never internal functions or the DB directly
-- Tests run against an isolated test DB, never the dev DB file
+- feat-001 test (test_user_can_add_a_task) stays green
+- Tests exercise only the public FastAPI endpoint via TestClient

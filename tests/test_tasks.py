@@ -10,3 +10,26 @@ def test_user_can_add_a_task(client):
 
     listed = client.get("/tasks").json()
     assert any(task["id"] == body["id"] and task["title"] == "Buy milk" for task in listed)
+
+
+def test_user_can_edit_a_task_title(client):
+    created = client.post("/tasks", json={"title": "Buy milk"}).json()
+
+    response = client.patch(f"/tasks/{created['id']}", json={"title": "Buy oat milk"})
+
+    assert response.status_code == 200
+    assert response.json()["title"] == "Buy oat milk"
+
+
+def test_editing_a_nonexistent_task_returns_404(client):
+    response = client.patch("/tasks/999999", json={"title": "Does not exist"})
+
+    assert response.status_code == 404
+
+
+def test_editing_a_task_with_empty_title_returns_422(client):
+    created = client.post("/tasks", json={"title": "Buy milk"}).json()
+
+    response = client.patch(f"/tasks/{created['id']}", json={"title": ""})
+
+    assert response.status_code == 422

@@ -20,3 +20,12 @@ export async function addTask(title: string): Promise<Task> {
   });
   return res.json();
 }
+
+export async function updateTask(id: number, title: string): Promise<Task> {
+  const res = await fetch(`${API_BASE_URL}/tasks/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
+  return res.json();
+}
