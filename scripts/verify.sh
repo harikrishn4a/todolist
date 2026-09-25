@@ -19,11 +19,11 @@ set -e
 
 echo "=== Build ==="
 # Build the frontend (TypeScript → JS via Vite)
-make build-frontend
+make build
 
 echo "=== Type check ==="
 # Typecheck the frontend TypeScript
-make typecheck-frontend
+make typecheck
 
 echo "=== Lint ==="
 # Lint backend Python with ruff, lint frontend with eslint

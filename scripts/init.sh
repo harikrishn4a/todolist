@@ -17,17 +17,11 @@ echo "=== Installing dependencies ==="
 # Stack: FastAPI (Python) backend + React/Vite/TypeScript frontend
 # Reuse Makefile targets where they exist; fall back to direct commands.
 
-# Backend: install Python dependencies
-if make -n install-backend > /dev/null 2>&1; then
-  make install-backend
+# Installs Python deps (pip) and Node deps (npm) for backend + frontend
+if make -n setup > /dev/null 2>&1; then
+  make setup
 else
   pip install -e ".[dev]"
-fi
-
-# Frontend: install Node dependencies
-if make -n install-frontend > /dev/null 2>&1; then
-  make install-frontend
-else
   cd frontend && npm install && cd ..
 fi
 

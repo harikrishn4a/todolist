@@ -51,7 +51,7 @@ todolist/
 3. Read `docs/PROGRESS.md` — understand current state
 4. Read `docs/SESSION-HANDOFF.md` — see what the last session left
 5. Run `git log --oneline -5` — see recent changes
-6. Run `./init.sh` — confirm baseline is not broken
+6. Run `scripts/init.sh` — confirm baseline is not broken
 7. Read `feature_list.json` — identify the current active feature
 8. Pick exactly one unfinished feature. Work only that until verified or blocked.
 

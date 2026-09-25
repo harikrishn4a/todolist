@@ -40,7 +40,7 @@
       "status": "unsure",
       "blocked_reason": "",
       "verification": [
-        "pytest passes for PUT /tasks/{id} endpoint (updates task title, returns 200 with updated task JSON)",
+        "pytest passes for PATCH /tasks/{id} endpoint (updates task title, returns 200 with updated task JSON)",
         "Editing a non-existent task returns 404",
         "Frontend reflects the updated title without a page refresh"
       ],
@@ -125,7 +125,7 @@
       "status": "unsure",
       "blocked_reason": "",
       "verification": [
-        "pytest passes for POST /tasks and PUT /tasks/{id} with optional due_date field (ISO 8601 string, nullable)",
+        "pytest passes for POST /tasks and PATCH /tasks/{id} with optional due_date field (ISO 8601 string, nullable)",
         "GET /tasks response includes due_date field for each task",
         "Frontend renders a date picker or input for due date",
         "Overdue incomplete tasks display a distinct visual style compared to non-overdue tasks"
