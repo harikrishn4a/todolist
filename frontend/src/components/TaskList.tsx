@@ -10,7 +10,7 @@ interface TaskListProps {
 
 function TaskList({ tasks, onEdit, onDelete, onToggleCompleted }: TaskListProps) {
   if (tasks.length === 0) {
-    return <p className="text-neutral-400">No tasks yet.</p>;
+    return <p className="text-ink-300">Nothing here yet — add a line above.</p>;
   }
 
   return (

@@ -47,8 +47,11 @@ function App() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16 font-mono text-neutral-900">
-      <h1 className="mb-8 text-2xl font-semibold">Todolist</h1>
+    <main className="mx-auto max-w-2xl px-6 py-16">
+      <div className="mb-8 flex items-baseline justify-between">
+        <h1 className="text-2xl font-bold">todo.md</h1>
+        <span className="text-sm text-ink-500">{tasks.length} shown</span>
+      </div>
       <TaskForm onAdd={handleAdd} />
       <FilterBar filter={filter} onFilterChange={setFilter} sort={sort} onSortChange={setSort} />
       <TaskList

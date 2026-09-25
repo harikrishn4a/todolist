@@ -18,20 +18,20 @@ function TaskForm({ onAdd }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-8 flex items-end gap-3 border-b border-neutral-300 focus-within:border-neutral-900">
+    <form onSubmit={handleSubmit} className="mb-8 flex flex-col gap-3 border-b border-line focus-within:border-ink-900 sm:flex-row sm:items-end">
       <input
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Add a task and press Enter"
-        className="w-full bg-transparent py-2 text-base outline-none placeholder:text-neutral-400"
+        className="w-full bg-transparent py-2 text-base outline-none placeholder:text-ink-300 focus-visible:ring-1 focus-visible:ring-ink-300"
       />
       <input
         type="date"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
         aria-label="Due date"
-        className="shrink-0 bg-transparent py-2 text-sm text-neutral-400 outline-none"
+        className="w-full bg-transparent py-2 text-sm text-ink-500 outline-none focus-visible:ring-1 focus-visible:ring-ink-300 sm:w-auto sm:shrink-0"
       />
     </form>
   );

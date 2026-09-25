@@ -1,0 +1,6 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" fill="#FAFAF8"/>
+  <g font-family="'Space Mono', monospace" font-size="20" font-weight="700" fill="#1C1B1A" text-anchor="middle" dominant-baseline="middle">
+    <text x="16" y="16">[x]</text>
+  </g>
+</svg>

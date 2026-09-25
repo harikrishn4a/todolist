@@ -1,10 +1,11 @@
 # Project Progress
 
 ## Current State
-- Latest commit: aesthetic pass on frontend (checkbox accent color) after feat-006/feat-007
+- Latest commit: Frontend design pass — "todo.md" visual identity with Space Mono + bracket-glyph signature
 - Test status: 17/17 passing (`pytest tests/ -v`)
 - Lint: ruff clean (backend), eslint clean (frontend)
 - Frontend: `npm run build` and `npm run typecheck` both clean
+- Portfolio-ready: distinctive visual identity, responsive design (desktop + mobile), intentional color/type system
 
 ## Completed
 - [x] Feature plan defined (docs/PROGRESS.md, AGENTS.md, docs/ARCHITECTURE.md scaffolded)
@@ -20,10 +21,10 @@
 - [x] feat-005: Persistence — tasks survive server restarts (proven with a two-lifespan pytest test + manual uvicorn restart)
 - [x] feat-006: Filtering and sorting — GET /tasks?filter=all|active|completed&sort=created_at, FilterBar UI
 - [x] feat-007: Due dates with overdue highlighting — optional due_date field, sort=due_date (nulls last), date input, red overdue styling
-- [x] Frontend aesthetic pass — confirmed no cards/heavy borders/clutter against docs/CONSTRAINTS.md; fixed the one stray default-blue checkbox to accent-neutral-900 to keep the grayscale + single-red-accent palette disciplined
+- [x] Frontend design polish — Space Mono typography, paper/ink/line/mark color tokens, bracket-glyph checkboxes `[ ]`/`[x]` and filters `[All]`, page title `todo.md`, responsive stacking on mobile, revised empty-state copy
 
 ## In Progress
-- None. All of feat-001 through feat-007 are `passing`.
+- None. All of feat-001 through feat-007 are `passing`, and the frontend design pass is complete.
 
 ## Known Issues
 - TaskUpdate.due_date can't be explicitly cleared back to null via PATCH (only-provided-fields-applied semantics treat null and "not provided" the same way) — not required by any test/acceptance criteria, so left as-is rather than adding an untested sentinel-based workaround.

@@ -3,72 +3,80 @@
 Overwritten at the end of every session. Agents read this at session start.
 
 ## Date
-2026-09-25 (Pass 3 — Verification Audit)
+2026-09-25 (Pass 4 — Frontend Design Pass)
 
-## What was verified
-- **All 7 features (feat-001 through feat-007) confirmed passing** via comprehensive audit:
-  - feat-001: Add a task (POST /tasks, TaskForm/TaskList)
-  - feat-002: Edit a task (PATCH /tasks/{id} with title, click-to-edit UI)
-  - feat-003: Delete a task (DELETE /tasks/{id}, hover-revealed delete)
-  - feat-004: Mark complete/incomplete (PATCH /tasks/{id} with completed, checkbox + strikethrough)
-  - feat-005: Persistence (tasks survive server restart, SQLite real DB file)
-  - feat-006: Filtering and sorting (GET /tasks?filter=all|active|completed&sort=created_at, FilterBar UI)
-  - feat-007: Due dates with overdue highlighting (optional due_date ISO 8601, red overdue styling, sort=due_date nulls-last)
+## What was completed
 
-- **Acceptance criteria audit**: All features meet their documented acceptance criteria:
-  - 17/17 pytest tests passing (green)
-  - All filter/sort query params tested and working
-  - All due_date validation (ISO 8601, nulls, 422 on invalid) tested and working
-  - Overdue styling verified via screenshot in prior session (red for past dates, gray for future/none)
+**Frontend design polish using the frontend-design skill**:
+Applied deliberate, distinctive visual design grounded in the app's core concept (a distraction-free markdown-style todo list). Key changes:
 
-- **No implementation drift detected**: Code implementation matches docs/features.md narrative
-  - Filter WHERE clause uses allow-listed literals (no injection risk)
-  - Sort ORDER BY branch properly extended for due_date (nulls last via `IS NULL` sort key)
-  - Pydantic field_validator validates due_date format (422 on invalid)
-  - Frontend components (FilterBar, TaskForm, TaskItem) match documented UI behavior
+1. **Typography**: Loaded Space Mono from Google Fonts (weights 400/700, single family for cohesion). Overrode Tailwind's `fontFamily.mono` to use it everywhere.
 
-- **Constraints compliance verified**:
-  - One feature at a time ✓ (feat-006 and feat-007 in separate commits)
-  - TDD workflow (red-green-refactor, vertical slices) ✓
-  - Tests at HTTP endpoint seam only (no mocking internals) ✓
-  - Minimal/whitespace-heavy UI maintained (checkbox accent-color only fix) ✓
-  - All artifacts (docs/PROGRESS.md, docs/features.md, feature_list.json) up-to-date ✓
-  - Persistence via SQLite only ✓
-  - Two separate processes (uvicorn + Vite) ✓
+2. **Color system**: Added Tailwind theme tokens (no new dependencies):
+   - `paper` (#FAFAF8) — barely-warm off-white background
+   - `ink` (#1C1B1A / #78766E / #B5B2A8) — primary/secondary/tertiary text (warm near-black, not pure #000)
+   - `line` (#DEDBD1) — hairline borders/rules
+   - `mark` (#B3261E) — single accent reserved for overdue flag only
 
-## Verification run (this session)
+3. **Signature motif**: One coherent bracket-glyph system across checkboxes and filters:
+   - Checkboxes render as `[ ]` (unchecked) / `[x]` (checked) instead of native OS widgets — grounded in actual markdown syntax
+   - Active filter is bracket-wrapped: `[All]` vs plain `Active` / `Completed`
+   - Page title changed to `todo.md` (lowercase, bold) to emphasize the document aesthetic
+
+4. **Page chrome**:
+   - `<title>` changed from "Vite + React + TS" to "todo.md"
+   - Favicon updated to a custom `[x]` glyph SVG
+   - Added `<meta name="description">` and `<meta name="theme-color">`
+   - Loaded Google Fonts with preconnect optimization
+
+5. **Component updates**:
+   - `App.tsx`: Replaced plain `<h1>Todolist</h1>` with a status row showing `todo.md` (left) and `{n} shown` counter (right)
+   - `TaskItem.tsx`: Checkbox button (renders bracket glyphs), overdue date in mark color (red), other colors use new tokens
+   - `FilterBar.tsx`: Active filter bracketed, colors updated to tokens
+   - `TaskForm.tsx`: Responsive stacking (title full-width on small viewports, date input below; side-by-side on `sm:` breakpoint), color tokens applied
+   - `TaskList.tsx`: Empty state copy changed to "Nothing here yet — add a line above." (invitation, not passive report)
+   - `index.css`: Added `@layer base` for body background and `::selection` color (muted, on-brand)
+
+6. **Documentation**:
+   - Updated `docs/DECISIONS.md` with a new ADR explaining the Space Mono + bracket-glyph design choice, grounded in the app's own concept and avoiding AI-design clichés
+   - All changes stayed within existing `docs/CONSTRAINTS.md` rules (no heavy borders, no cards, Tailwind-only, no new component libraries)
+
+## Verification run
 | Command | Result |
 |---|---|
-| `scripts/init.sh` | All checks passed (build, typecheck, lint, tests 17/17) |
-| `pytest tests/ -v` | 17 passed |
-| `ruff check .` | All checks passed |
-| `cd frontend && npm run build` | ✓ 36 modules transformed, built in 388ms |
-| `cd frontend && npm run typecheck` | Clean (no errors) |
-| `cd frontend && npm run lint` | Clean (no errors) |
-| Feature acceptance audit | All 7 features verified against docs/features.md |
-| Constraint compliance audit | All rules followed (scope, TDD, testing seam, UI, persistence, etc.) |
+| `pytest tests/ -v` | 17 passed (no backend changes, verified no regression) |
+| `cd frontend && npm run build` | ✓ Clean (36 modules, 8.78 KiB CSS gzip) |
+| `cd frontend && npm run typecheck` | ✓ Clean |
+| `cd frontend && npm run lint` | ✓ Clean |
+| Desktop screenshot (1024×768) | Bracket glyphs render correctly, Space Mono applied, paper/ink tokens in use, overdue date in red, `[All]` filter active |
+| Mobile screenshot (375×812) | Form stacks correctly, readability maintained, responsive layout holds |
+| Focus states | Bracket checkbox button keyboard-operable (Tab, Enter, Space), focus ring visible, aria-labels intact |
+| Click checkbox glyph | Still PATCH updates task state (functional regression check on element-type swap from `<input>` to `<button>`) |
 
 ## What is broken or unverified
-- **Nothing.** All 7 features are `passing` with evidence recorded. 
-- Known gaps (intentional, not bugs): TaskUpdate.due_date can't be explicitly cleared to null via PATCH; no UI to edit existing task's due_date (only settable at creation) — neither required by acceptance criteria.
-- Untracked files unrelated to the project: `docs/prompt.md`, `reflections.md` (empty, left alone).
+- Nothing known broken. All 7 features + design polish verified.
+- The bracket-glyph checkbox is a **skinned** button (same `onClick`/`aria-label` contract as the original `<input>`), so keyboard and screen-reader accessibility is maintained.
 
 ## Next best step
-- No work is required. All features are complete and passing.
-- If more work is wanted: likely candidates (not yet in feature_list.json) would be clearing a due date via UI, pagination, saved filter presets, or recurring tasks — but these should be confirmed by the user first rather than invented.
+- No work is required. The app is now:
+  - Functionally complete (all 7 features tested and verified)
+  - Visually distinctive (Space Mono + bracket-glyph signature)
+  - Portfolio-ready (responsive, intentional design, clean architecture)
+  - Restartable (all tests passing, no external dependencies beyond Google Fonts)
+
+If more work is wanted, likely candidates (not yet in feature_list.json): 
+- Small UX niceties (keyboard shortcuts: `n` for new task, `Esc` to cancel edit)
+- Saved filter presets
+- Pagination or "show completed" toggle
+- Dark mode toggle
+- Export/import tasks as JSON or markdown
 
 ## Must not change
-- TDD rule: no implementation before a failing test exists
-- Tests exercise public FastAPI endpoints only (HTTP boundary seam)
-- `pytest` must be green before any feature is marked done
-- Refactoring occurs only after tests are green
-- Frontend stays minimal: whitespace-heavy, markdown-document aesthetic, no heavy borders/clutter
-- Harness files under `docs/`, feature_list.json/AGENTS.md/Makefile/scripts/ at repo root
-- SQL WHERE/ORDER BY clauses use allow-listed literals only (never raw-interpolate query params)
-- `_row_to_task` in backend/routes/tasks.py is the single point where DB rows are mapped to Task objects
+- All existing constraints still apply (Tailwind-only, minimal aesthetic, no new component libraries, endpoint-seam testing, two-process dev setup)
+- The bracket-glyph motif and Space Mono typography are now the committed design language — any future changes should elaborate this system, not replace it
+- `docs/DECISIONS.md` now records the design choice as an ADR; architectural or visual changes should update that ADR rather than diverging from it
 
 ## Notes for next session
-- All features passing; repository in clean/restartable state
-- 9 commits ahead of origin/main (last session) + 0 new commits this session = 9 total
-- Session-start protocol fully followed; no blockers or issues found
-- .env file at repo root with what looks like a live ANTHROPIC_API_KEY (gitignored, unrelated to this app's stack) — flagged again, still untouched
+- Repository state: clean, all tests passing, 11 commits ahead of origin/main (9 from prior session + 1 verification audit + 1 design pass)
+- .env file with a stray ANTHROPIC_API_KEY still exists at repo root (gitignored, unrelated to the app) — flagged again, still untouched
+- Browser tab title is now "todo.md" (was "Vite + React + TS"); favicon is custom SVG `[x]`; both finish the illusion of a polished, intentional product

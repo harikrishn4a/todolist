@@ -11,22 +11,30 @@ const FILTERS: Filter[] = ["all", "active", "completed"];
 
 function FilterBar({ filter, onFilterChange, sort, onSortChange }: FilterBarProps) {
   return (
-    <div className="mb-6 flex items-center justify-between text-sm text-neutral-500">
+    <div className="mb-6 flex items-center justify-between text-sm text-ink-500">
       <div className="flex gap-4">
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => onFilterChange(f)}
-            className={f === filter ? "text-neutral-900 underline underline-offset-4" : "hover:text-neutral-900"}
-          >
-            {f[0].toUpperCase() + f.slice(1)}
-          </button>
-        ))}
+        {FILTERS.map((f) => {
+          const isActive = f === filter;
+          const label = f[0].toUpperCase() + f.slice(1);
+          return (
+            <button
+              key={f}
+              onClick={() => onFilterChange(f)}
+              className={`transition-colors focus:outline-none ${
+                isActive
+                  ? "font-semibold text-ink-900"
+                  : "hover:text-ink-900"
+              }`}
+            >
+              {isActive ? `[${label}]` : label}
+            </button>
+          );
+        })}
       </div>
       <select
         value={sort}
         onChange={(e) => onSortChange(e.target.value as Sort)}
-        className="bg-transparent text-neutral-500 outline-none"
+        className="bg-transparent text-ink-500 outline-none focus-visible:ring-1 focus-visible:ring-ink-300"
       >
         <option value="created_at">Created</option>
         <option value="due_date">Due date</option>
