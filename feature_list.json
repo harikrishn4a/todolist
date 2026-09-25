@@ -1,6 +1,6 @@
 {
   "project": "Todolist App",
-  "last_updated": "2025-01-31",
+  "last_updated": "2026-09-25",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -20,16 +20,21 @@
       "area": "Backend / API",
       "title": "Add a task",
       "user_visible_behavior": "User submits a task title via the frontend form; the task is saved to SQLite and appears in the task list without a page refresh.",
-      "status": "unsure",
+      "status": "passing",
       "blocked_reason": "",
       "verification": [
         "pytest passes for POST /tasks endpoint (creates a task and returns 201 with task JSON)",
         "Task persists after server restart (GET /tasks returns it on next boot)",
         "Frontend form submits and new task appears in the list"
       ],
-      "evidence": [],
-      "agent_notes": "",
-      "last_updated": "2025-01-31"
+      "evidence": [
+        "pytest tests/ -v -> tests/test_tasks.py::test_user_can_add_a_task PASSED (1 passed)",
+        "curl -X POST /tasks {\"title\":\"Buy milk\"} -> 201 {id:1,title:'Buy milk',completed:false,created_at:...}; curl GET /tasks includes it",
+        "Playwright screenshot: typed 'Walk the dog' in the UI form, pressed Enter, appeared in list without reload alongside persisted 'Buy milk'; console --errors empty",
+        "cd frontend && npm run build/lint/typecheck -> clean"
+      ],
+      "agent_notes": "Implemented backend/models.py (Task, TaskCreate), backend/database.py init_db + get_connection, backend/routes/tasks.py (POST/GET /tasks), lifespan startup hook in backend/main.py. Frontend: TaskForm, TaskList, api.ts addTask/listTasks, App.tsx wiring.",
+      "last_updated": "2026-09-25"
     },
     {
       "id": "feat-002",

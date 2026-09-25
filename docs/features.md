@@ -16,11 +16,11 @@ Status tracking lives in `feature_list.json`. This file is the narrative spec.
 A text input field (and submit button or Enter key) lets the user type a task title and add it to the list. The new task appears immediately in the list without a page reload.
 
 **Tasks:**
-- [ ] Write failing pytest test for POST /tasks endpoint (title required, returns 201 + task JSON)
-- [ ] Implement POST /tasks route in FastAPI with SQLite persistence
-- [ ] Confirm pytest passes
-- [ ] Build React input form that calls POST /tasks via fetch
-- [ ] Render new task in the task list on success
+- [x] Write failing pytest test for POST /tasks endpoint (title required, returns 201 + task JSON)
+- [x] Implement POST /tasks route in FastAPI with SQLite persistence
+- [x] Confirm pytest passes
+- [x] Build React input form that calls POST /tasks via fetch
+- [x] Render new task in the task list on success
 
 **Acceptance criteria:**
 - POST /tasks with a valid title returns HTTP 201 and a JSON object with at least `id`, `title`, `completed`, and `created_at`
@@ -33,7 +33,7 @@ A text input field (and submit button or Enter key) lets the user type a task ti
 - Bulk task import
 
 **Notes:**
-Not yet documented
+Implemented via TDD: one failing pytest test at the POST /tasks seam (tests/test_tasks.py::test_user_can_add_a_task), then minimal FastAPI + SQLite implementation to green. GET /tasks was added alongside since the test verifies persistence through the public interface rather than querying SQLite directly. Frontend: TaskForm + TaskList components, api.ts fetch wrappers, wired into App.tsx. Verified end-to-end with curl and a Playwright-driven browser screenshot (frontend/dev server + backend both running).
 
 ---
 
