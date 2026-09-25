@@ -1,1 +1,14 @@
 .env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# SQLite
+*.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
