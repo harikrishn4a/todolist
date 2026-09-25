@@ -54,6 +54,8 @@ There were three things I kept for myself rather than delegating. First, the act
 
 With more time I'd bring frontend testing into the real verification pipeline. The Playwright checks I ran were genuine but manual and ad hoc, not wired into make check the way the backend's pytest suite is, so they're not enforced the same way. After the first prompt-build session, I noticed that the frontend build did not meet my expectation much as it was rather plain, and the critieria i set was not verified vigorously as the agent didn't have a way to access and traverse through the app from the perspective of a user, verifying whehter the frontend rendered accordingly.
 
+![Blank page after the first prompt-build session — the UI did not render](./docs/screenshots/14-frontend-blank-after-first-prompt.jpg)
+
 ## Harness score, before and after
 
 Before any of this, aiready scored the repo 35/100 across its five subsystems. After I filled in the harness, cut the noise, fixed the bugs I found, and finished the build, I re-ran the audit: 61/100, a 26 point increase.
